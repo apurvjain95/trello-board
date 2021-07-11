@@ -30,16 +30,26 @@ const Card = ({
         shouldCloseOnOverlayClick={true}
       >
         <Flex1Column className="modal">
-          <FlexRow className="titleRow" style={{ justifyContent: "center" }}>
-            Card Content
+          <FlexRow
+            className="titleRow"
+            style={{ justifyContent: "center", marginBottom: 20 }}
+          >
+            <Flex1>Card Content</Flex1>
+            <Flex1 style={{ justifyContent: "flex-end" }}>
+              <button onClick={() => setShowModal(false)}>
+                <span className="material-icons">close</span>
+              </button>
+            </Flex1>
           </FlexRow>
           <FlexRow className="titleRow">
             <input
               name="cardTitle"
               className="titleRow"
               value={cardName}
-              onChange={(e) => setCardName(e.target.value)}
-              onBlur={(e) => changeCardName(e.target.value, card.id, status)}
+              onChange={(e) => {
+                setCardName(e.target.value);
+                changeCardName(e.target.value, card.id, status);
+              }}
             />
           </FlexRow>
           <FlexRow className="modalContent">
@@ -55,8 +65,10 @@ const Card = ({
               className="descRowInput"
               width="100%"
               value={desc}
-              onChange={(e) => setDesc(e.target.value)}
-              onBlur={(e) => changeCardDesc(e.target.value, card.id, status)}
+              onChange={(e) => {
+                setDesc(e.target.value);
+                changeCardDesc(e.target.value, card.id, status);
+              }}
             />
           </FlexRow>
         </Flex1Column>
