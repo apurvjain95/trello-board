@@ -1,0 +1,139 @@
+import React, { useState, useEffect } from "react";
+import { getCards, setCards } from "../../utils/storageUtils";
+import { Flex1Column, Flex1 } from "../@styled/BaseElements";
+import Card from "../Card";
+import "./Status.css";
+
+const Status = () => {
+  const [cards, setAllCards] = useState<any>({});
+  useEffect(() => {
+    const allCards = JSON.parse(getCards());
+    setAllCards(allCards);
+  }, []);
+
+  useEffect(() => setCards(JSON.stringify(cards)), [cards]);
+
+  const drop = (e: any, status: string) => {
+    e.preventDefault();
+    const data = e.dataTransfer.getData("text");
+    // console.log(data);
+    const prevStatus = data.split(":")[0];
+    const prevId = data.split(":")[1];
+    const prevName = data.split(":")[2];
+    if (status !== prevStatus) {
+      const latestDeletingCard = cards[prevStatus].filter(
+        (card: any) => card.id !== prevId
+      );
+      const latestAddingCard = [
+        ...cards[status],
+        {
+          id: `${cards[status].length}-${prevName}`,
+          name: prevName,
+        },
+      ];
+      const allCards = {
+        ...cards,
+        [prevStatus]: latestDeletingCard,
+        [status]: latestAddingCard,
+      };
+      setAllCards(allCards);
+      setCards(JSON.stringify(allCards));
+    }
+
+    // console.log("AA", data.status, data.id);
+  };
+
+  const allowDrop = (e: any) => {
+    e.preventDefault();
+  };
+
+  const drag =
+    ({ status }: { status: string }) =>
+    (e: any, card: any) => {
+      e.dataTransfer.setData("text/plain", `${status}:${card.id}:${card.name}`);
+    };
+
+  const addStatus = (e: any) => {
+    if (e.key === "Enter") {
+      if (
+        e.target.value === "" ||
+        Object.keys(cards).indexOf(e.target.value) !== -1
+      )
+        return;
+      setAllCards({ ...cards, [e.target.value]: [] });
+      e.target.value = "";
+      return;
+    }
+  };
+
+  const addCard = (e: any, status: string) => {
+    if (e.key === "Enter") {
+      const targetVal = e.target.value;
+      if (targetVal === "") return;
+      const vals = cards[status] || [];
+      const newAllCards = {
+        ...cards,
+        [status]: [
+          ...vals,
+          { id: `${vals.length}-${targetVal}`, name: targetVal },
+        ],
+      };
+      setAllCards(newAllCards);
+      setCards(JSON.stringify(newAllCards));
+      e.target.value = "";
+      return;
+    }
+  };
+
+  const deleteCard =
+    ({ status }: { status: string }) =>
+    (cardId: string) => {
+      const latestCards = cards[status].filter(
+        (card: any) => card.id !== cardId
+      );
+      setAllCards({ ...cards, [status]: [...latestCards] });
+    };
+
+  return (
+    <Flex1 style={{ justifyContent: "center" }}>
+      {Object.keys(cards).map((status) => (
+        <Flex1Column
+          className="statusDivs"
+          key={status}
+          onDrop={(event) => drop(event, status)}
+          onDragOver={(event) => allowDrop(event)}
+        >
+          <div className="statusName">
+            {status}{" "}
+            <span style={{ color: "gray", paddingLeft: "10px" }}>
+              {cards[status].length}
+            </span>
+          </div>
+          {cards[status] &&
+            cards[status].map((card: any) => (
+              <Card
+                card={card}
+                key={card.id}
+                deleteCard={deleteCard.bind(this, { status })()}
+                drag={drag.bind(this, { status })()}
+              />
+            ))}
+          <input
+            name="addCard"
+            placeholder="+ New"
+            onKeyPress={(e) => addCard(e, status)}
+          />
+        </Flex1Column>
+      ))}
+      <Flex1Column className="statusDivs" key={"newStatus"}>
+        <input
+          name="addStatus"
+          placeholder="+ Add a Group"
+          onKeyPress={(e) => addStatus(e)}
+        />
+      </Flex1Column>
+    </Flex1>
+  );
+};
+
+export default Status;
