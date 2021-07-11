@@ -3,3 +3,18 @@
   min-width: calc((100vw - 60px) / 6);
   max-width: calc((100vw - 60px) / 4);
 }
+
+.statusName {
+  font-weight: bold;
+}
+
+input {
+  border: none;
+  margin-top: 7px;
+  outline: none;
+  padding-left: 10px;
+}
+/* 
+input:active {
+  outline: none;
+} */

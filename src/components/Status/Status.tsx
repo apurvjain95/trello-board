@@ -5,19 +5,21 @@ import Card from "../Card";
 import "./Status.css";
 
 const Status = () => {
-  //   const [statuses, setAllStatuses] = useState<string[]>([]);
   const [cards, setAllCards] = useState<any>({});
   useEffect(() => {
-    // const allStatus = JSON.parse(getStatuses());
     const allCards = JSON.parse(getCards());
-    // setAllStatuses(allStatus);
     setAllCards(allCards);
   }, []);
-  //   useEffect(() => {
-  //     setStatuses(JSON.stringify(statuses));
-  //   }, [statuses]);
 
-  useEffect(() => console.log(cards), [cards]);
+  useEffect(() => setCards(JSON.stringify(cards)), [cards]);
+
+  const drop = (e: any, status: string) => {
+    e.preventDefault();
+  };
+
+  const allowDrop = (e: any) => {
+    e.preventDefault();
+  };
 
   const addStatus = (e: any) => {
     if (e.key === "Enter") {
@@ -26,7 +28,6 @@ const Status = () => {
         Object.keys(cards).indexOf(e.target.value) !== -1
       )
         return;
-      //   setAllStatuses([...statuses, e.target.value]);
       setAllCards({ ...cards, [e.target.value]: [] });
       e.target.value = "";
       return;
@@ -35,9 +36,16 @@ const Status = () => {
 
   const addCard = (e: any, status: string) => {
     if (e.key === "Enter") {
-      if (e.target.value === "") return;
+      const targetVal = e.target.value;
+      if (targetVal === "") return;
       const vals = cards[status] || [];
-      const newAllCards = { ...cards, [status]: [...vals, e.target.value] };
+      const newAllCards = {
+        ...cards,
+        [status]: [
+          ...vals,
+          { id: `${vals.length}-${targetVal}`, name: targetVal },
+        ],
+      };
       setAllCards(newAllCards);
       setCards(JSON.stringify(newAllCards));
       e.target.value = "";
@@ -45,16 +53,41 @@ const Status = () => {
     }
   };
 
+  const deleteCard =
+    ({ status }: { status: string }) =>
+    (cardId: string) => {
+      const latestCards = cards[status].filter(
+        (card: any) => card.id !== cardId
+      );
+      setAllCards({ ...cards, [status]: [...latestCards] });
+    };
+
   return (
     <Flex1 style={{ justifyContent: "center" }}>
       {Object.keys(cards).map((status) => (
-        <Flex1Column className="statusDivs" key={status}>
-          {status}
+        <Flex1Column
+          className="statusDivs"
+          key={status}
+          onDrop={(event) => drop(event, status)}
+          onDragOver={(event) => allowDrop(event)}
+        >
+          <div className="statusName">
+            {status}{" "}
+            <span style={{ color: "gray", paddingLeft: "10px" }}>
+              {cards[status].length}
+            </span>
+          </div>
           {cards[status] &&
-            cards[status].map((card: any) => <Card card={card} />)}
+            cards[status].map((card: any) => (
+              <Card
+                card={card}
+                key={card.id}
+                deleteCard={deleteCard.bind(this, { status })()}
+              />
+            ))}
           <input
             name="addCard"
-            placeholder="new"
+            placeholder="+ New"
             onKeyPress={(e) => addCard(e, status)}
           />
         </Flex1Column>
@@ -62,7 +95,7 @@ const Status = () => {
       <Flex1Column className="statusDivs" key={"newStatus"}>
         <input
           name="addStatus"
-          placeholder="Add a Group"
+          placeholder="+ Add a Group"
           onKeyPress={(e) => addStatus(e)}
         />
       </Flex1Column>

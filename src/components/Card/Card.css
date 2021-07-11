@@ -1,0 +1,21 @@
+@import url(https://fonts.googleapis.com/icon?family=Material+Icons);
+.card {
+  margin: 5px;
+  border: 1px solid #8080806b;
+  padding: 5px;
+  box-shadow: 2px 2px #80808038;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card .actionButton {
+  visibility: hidden;
+}
+
+.card:hover .actionButton {
+  visibility: visible;
+}
+
+/* .actionButton {
+  display: none;
+} */
