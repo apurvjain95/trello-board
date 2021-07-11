@@ -15,11 +15,43 @@ const Status = () => {
 
   const drop = (e: any, status: string) => {
     e.preventDefault();
+    const data = e.dataTransfer.getData("text");
+    // console.log(data);
+    const prevStatus = data.split(":")[0];
+    const prevId = data.split(":")[1];
+    const prevName = data.split(":")[2];
+    if (status !== prevStatus) {
+      const latestDeletingCard = cards[prevStatus].filter(
+        (card: any) => card.id !== prevId
+      );
+      const latestAddingCard = [
+        ...cards[status],
+        {
+          id: `${cards[status].length}-${prevName}`,
+          name: prevName,
+        },
+      ];
+      const allCards = {
+        ...cards,
+        [prevStatus]: latestDeletingCard,
+        [status]: latestAddingCard,
+      };
+      setAllCards(allCards);
+      setCards(JSON.stringify(allCards));
+    }
+
+    // console.log("AA", data.status, data.id);
   };
 
   const allowDrop = (e: any) => {
     e.preventDefault();
   };
+
+  const drag =
+    ({ status }: { status: string }) =>
+    (e: any, card: any) => {
+      e.dataTransfer.setData("text/plain", `${status}:${card.id}:${card.name}`);
+    };
 
   const addStatus = (e: any) => {
     if (e.key === "Enter") {
@@ -83,6 +115,7 @@ const Status = () => {
                 card={card}
                 key={card.id}
                 deleteCard={deleteCard.bind(this, { status })()}
+                drag={drag.bind(this, { status })()}
               />
             ))}
           <input
