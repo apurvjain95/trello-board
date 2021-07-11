@@ -16,19 +16,17 @@ const Status = () => {
   const drop = (e: any, status: string) => {
     e.preventDefault();
     const data = e.dataTransfer.getData("text");
-    // console.log(data);
-    const prevStatus = data.split(":")[0];
-    const prevId = data.split(":")[1];
-    const prevName = data.split(":")[2];
+    const prevStatus = data.split("*")[0];
+    const draggedCard = JSON.parse(data.split("*")[1]);
     if (status !== prevStatus) {
       const latestDeletingCard = cards[prevStatus].filter(
-        (card: any) => card.id !== prevId
+        (card: any) => card.id !== draggedCard.id
       );
       const latestAddingCard = [
         ...cards[status],
         {
-          id: `${cards[status].length}-${prevName}`,
-          name: prevName,
+          ...draggedCard,
+          id: `${cards[status].length}-${draggedCard.name}`,
         },
       ];
       const allCards = {
@@ -39,8 +37,6 @@ const Status = () => {
       setAllCards(allCards);
       setCards(JSON.stringify(allCards));
     }
-
-    // console.log("AA", data.status, data.id);
   };
 
   const allowDrop = (e: any) => {
@@ -50,7 +46,7 @@ const Status = () => {
   const drag =
     ({ status }: { status: string }) =>
     (e: any, card: any) => {
-      e.dataTransfer.setData("text/plain", `${status}:${card.id}:${card.name}`);
+      e.dataTransfer.setData("text/plain", `${status}*${JSON.stringify(card)}`);
     };
 
   const addStatus = (e: any) => {
@@ -75,7 +71,7 @@ const Status = () => {
         ...cards,
         [status]: [
           ...vals,
-          { id: `${vals.length}-${targetVal}`, name: targetVal },
+          { id: `${vals.length}-${targetVal}`, name: targetVal, desc: "" },
         ],
       };
       setAllCards(newAllCards);
@@ -93,6 +89,26 @@ const Status = () => {
       );
       setAllCards({ ...cards, [status]: [...latestCards] });
     };
+
+  const changeCardName = (newName: string, id: string, status: string) => {
+    const latestCards = cards[status].reduce((allCards: any[], card: any) => {
+      if (card.id === id) return [...allCards, { ...card, name: newName }];
+      return [...allCards, card];
+    }, []);
+    const allCards = { ...cards, [status]: latestCards };
+    setCards(allCards);
+    setAllCards(allCards);
+  };
+
+  const changeCardDesc = (newDesc: string, id: string, status: string) => {
+    const latestCards = cards[status].reduce((allCards: any[], card: any) => {
+      if (card.id === id) return [...allCards, { ...card, desc: newDesc }];
+      return [...allCards, card];
+    }, []);
+    const allCards = { ...cards, [status]: latestCards };
+    setCards(allCards);
+    setAllCards(allCards);
+  };
 
   return (
     <Flex1 style={{ justifyContent: "center" }}>
@@ -116,9 +132,13 @@ const Status = () => {
                 key={card.id}
                 deleteCard={deleteCard.bind(this, { status })()}
                 drag={drag.bind(this, { status })()}
+                status={status}
+                changeCardName={changeCardName}
+                changeCardDesc={changeCardDesc}
               />
             ))}
           <input
+            className="input"
             name="addCard"
             placeholder="+ New"
             onKeyPress={(e) => addCard(e, status)}
@@ -127,6 +147,7 @@ const Status = () => {
       ))}
       <Flex1Column className="statusDivs" key={"newStatus"}>
         <input
+          className="input"
           name="addStatus"
           placeholder="+ Add a Group"
           onKeyPress={(e) => addStatus(e)}
