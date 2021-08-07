@@ -102,7 +102,11 @@ const GoalComponent = () => {
         <FieldInput
           label="Total Amount"
           value={goalAmount}
-          onChange={(val: any) => setGoalAmount(val.target.value)}
+          onChange={(val: any) => {
+            setGoalAmount(
+              parseInt(isNaN(parseInt(val.target.value)) ? 0 : val.target.value)
+            );
+          }}
         />
         <MonthPicker
           label="Reach goal by"
@@ -149,7 +153,7 @@ const GoalComponent = () => {
             for{" "}
             <span style={{ fontWeight: "bold" }}>{totalDuration} months </span>
             to reach your goal of{" "}
-            <span style={{ fontWeight: "bold" }}>${goalAmount} </span>
+            <span style={{ fontWeight: "bold" }}>${goalAmount || 0} </span>
             by{" "}
             <span style={{ fontWeight: "bold" }}>
               {months[month]} {year}.
