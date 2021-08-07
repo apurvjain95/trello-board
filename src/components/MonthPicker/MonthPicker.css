@@ -1,0 +1,14 @@
+.monthDivStyle {
+  width: 100%;
+  border: 1px solid lightgray;
+  border-radius: 4px;
+  color: gray;
+  display: inherit;
+  align-items: center;
+  height: 40px;
+}
+
+.monthDivStyle:focus {
+  border: 2px solid #2e7df8;
+  outline: none;
+}
