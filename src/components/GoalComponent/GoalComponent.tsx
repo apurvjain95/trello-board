@@ -131,10 +131,13 @@ const GoalComponent = () => {
           style={{
             padding: "20px",
             justifyContent: "space-between",
+            alignItems: "center",
           }}
         >
           <div style={{ fontWeight: "bold" }}>Monthly amount</div>
-          <div style={{ color: "#0179ff", fontWeight: "bold" }}>
+          <div
+            style={{ color: "#0179ff", fontWeight: "bold", fontSize: "25px" }}
+          >
             ${monthlyAmount}
           </div>
         </Flex1Row>
