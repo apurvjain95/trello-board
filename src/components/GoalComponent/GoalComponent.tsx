@@ -104,7 +104,7 @@ const GoalComponent = () => {
           value={goalAmount}
           onChange={(val: any) => {
             setGoalAmount(
-              parseInt(isNaN(parseInt(val.target.value)) ? 0 : val.target.value)
+              isNaN(parseInt(val.target.value)) ? "" : val.target.value
             );
           }}
         />
