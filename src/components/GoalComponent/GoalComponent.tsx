@@ -53,7 +53,7 @@ const GoalComponent = () => {
     }
     setTotalDuration(totalMonthsForTarget);
     setMonthlyAmount(Math.ceil(goalAmount / totalMonthsForTarget));
-  }, [goalAmount, month, year]);
+  }, [goalAmount, month, year, currentYear, currentMonth]);
 
   const increaseMonth = () => {
     if (month === 11) {
