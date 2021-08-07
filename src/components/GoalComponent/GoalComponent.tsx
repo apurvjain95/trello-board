@@ -76,7 +76,7 @@ const GoalComponent = () => {
 
   return (
     <Flex1Column className="mainGoalCalc">
-      <Flex1Row style={{ padding: "10px" }}>
+      <Flex1Row style={{ padding: "10px", paddingTop: "20px" }}>
         <img src={house} alt="house" height="40px" />
         <Flex1Column
           className="heading"
@@ -104,7 +104,7 @@ const GoalComponent = () => {
           value={goalAmount}
           onChange={(val: any) => {
             setGoalAmount(
-              isNaN(parseInt(val.target.value)) ? "" : val.target.value
+              parseInt(isNaN(parseInt(val.target.value)) ? 0 : val.target.value)
             );
           }}
         />
@@ -169,7 +169,8 @@ const GoalComponent = () => {
             fontWeight: "bold",
             fontSize: "15px",
             padding: "15px",
-            width: "50%",
+            width: "100%",
+            maxWidth: "300px",
             border: "none",
             borderRadius: "25px",
           }}

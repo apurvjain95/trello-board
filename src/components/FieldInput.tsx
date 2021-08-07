@@ -36,9 +36,10 @@ const FieldInput = (props: any) => {
           {...props}
           style={{
             border: 0,
-            padding: "10px",
+            paddingLeft: "10px",
             color: "#4d6475",
             outline: "none",
+            fontSize: "18px",
             fontWeight: "bolder",
           }}
         />
